@@ -1,0 +1,4 @@
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.304 h1:WOhtD9UtB10DNCq2b8gAop4sQcQ665QA3mr1f9M3w+w=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.304/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.0.304 h1:fYdCnuA3XthVJeuIPvRL92ZUlZFnqKN0rHaCafi+Fg0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/lighthouse v1.0.304/go.mod h1:r8txjlw4DjLDZFOpnPC/hOFHr1VckZc0jjBK6XIFLP0=
