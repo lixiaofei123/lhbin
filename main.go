@@ -284,7 +284,7 @@ func batchOperatorInstances(operator string, checkCallback func() error, callbac
 		if err != nil {
 			fmt.Printf("%s地域的实例%s(%s)%s失败，原因是:%s \n", region, name, insid, operator, err.Error())
 		} else {
-			fmt.Printf("%s地域的实例%(%s)s%s成功\n", region, name, insid, operator)
+			fmt.Printf("%s地域的实例(%s)%s%s成功\n", region, name, insid, operator)
 		}
 	})
 
