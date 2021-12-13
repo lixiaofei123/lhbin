@@ -1,5 +1,11 @@
 package driver
 
+import (
+	"errors"
+
+	"github.com/lixiaofei123/lhbin/config"
+)
+
 type Driver interface {
 	ListRegions() ([]*Region, error)
 	ListZones(region string) ([]*Zone, error)
@@ -30,4 +36,11 @@ type Driver interface {
 	AddFirewallRules(region string, instanceID string, roles []*FirewallRule) error
 	UpdateFirewallRules(region string, instanceID string, roles []*FirewallRule) error
 	DeleteFirewallRules(region string, instanceID string, roles []*FirewallRule) error
+}
+
+func GetDriver(account *config.AccountConfig) (Driver, error) {
+	if account.Driver == config.QQCloud {
+		return NewQQCloudLHDriver(account.AKID, account.AKSecret), nil
+	}
+	return nil, errors.New("没有合适的驱动")
 }

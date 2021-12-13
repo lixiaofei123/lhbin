@@ -46,7 +46,7 @@ type InstanceInfo struct {
 	PlatformType string
 	Disk         int
 	PublicIP     string
-	PeivateIP    string
+	PrivateIP    string
 	Bandwidth    int
 	State        InstanceState
 	CreatedTime  time.Time

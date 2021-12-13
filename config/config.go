@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -110,4 +111,19 @@ func DeleteAccount(driver DriverName, delAccount string) {
 		log.Panic(err)
 	}
 
+}
+
+func FindAcount(driver DriverName, findAccount string) (*AccountConfig, error) {
+	for _, account := range GlobalConfig.Accounts {
+		if account.Driver == driver {
+			if findAccount == "" {
+				return account, nil
+			}
+			if findAccount == account.Account {
+				return account, nil
+			}
+		}
+	}
+
+	return nil, errors.New("未找到对应的账户")
 }

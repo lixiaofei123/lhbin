@@ -135,7 +135,7 @@ func lhRespInstaceToInstaceInfo(region string, lhinstance *lighthouse.Instance) 
 		PlatformType: *lhinstance.PlatformType,
 		Disk:         int(*lhinstance.SystemDisk.DiskSize),
 		PublicIP:     *lhinstance.PublicAddresses[0],
-		PeivateIP:    *lhinstance.PrivateAddresses[0],
+		PrivateIP:    *lhinstance.PrivateAddresses[0],
 		Bandwidth:    int(*lhinstance.InternetAccessible.InternetMaxBandwidthOut),
 		State:        InstanceState(*lhinstance.InstanceState),
 	}
@@ -145,7 +145,7 @@ func lhRespInstaceToInstaceInfo(region string, lhinstance *lighthouse.Instance) 
 	}
 
 	if len(lhinstance.PrivateAddresses) > 0 {
-		instanceInfo.PeivateIP = *lhinstance.PrivateAddresses[0]
+		instanceInfo.PrivateIP = *lhinstance.PrivateAddresses[0]
 	}
 
 	if lhinstance.CreatedTime != nil {
@@ -267,8 +267,8 @@ func (driver *QQCloudLHDriver) InstancesTrafficPackages(region string, instanceI
 	for _, lhpackage := range response.Response.InstanceTrafficPackageSet {
 		packages = append(packages, &TrafficPackage{
 			InstanceId: *lhpackage.InstanceId,
+			Total:      *lhpackage.TrafficPackageSet[0].TrafficPackageTotal,
 			Used:       *lhpackage.TrafficPackageSet[0].TrafficUsed,
-			Total:      *lhpackage.TrafficPackageSet[0].TrafficUsed,
 			Remaining:  *lhpackage.TrafficPackageSet[0].TrafficPackageRemaining,
 		})
 	}
