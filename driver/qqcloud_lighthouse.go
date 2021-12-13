@@ -313,7 +313,7 @@ func (driver *QQCloudLHDriver) SnapshotInfo(region, snapshotID string) (*SnapSho
 
 	request := lighthouse.NewDescribeSnapshotsRequest()
 
-	request.SnapshotIds = common.StringPtrs([]string{"snapshotID"})
+	request.SnapshotIds = common.StringPtrs([]string{snapshotID})
 
 	response, err := client.DescribeSnapshots(request)
 	if err != nil {
@@ -582,13 +582,146 @@ func (driver *QQCloudLHDriver) DeleteFirewallRules(region string, instanceID str
 
 	for _, role := range roles {
 		request.FirewallRules = append(request.FirewallRules, &lighthouse.FirewallRule{
-			Protocol:                common.StringPtr(string(role.Protocol)),
-			Port:                    common.StringPtr(role.Port),
-			CidrBlock:               common.StringPtr(role.CidrBlock),
-			Action:                  common.StringPtr(string(role.Action)),
-			FirewallRuleDescription: common.StringPtr(role.Description),
+			Protocol:  common.StringPtr(string(role.Protocol)),
+			Port:      common.StringPtr(role.Port),
+			CidrBlock: common.StringPtr(role.CidrBlock),
+			Action:    common.StringPtr(string(role.Action)),
 		})
 	}
 	_, err := client.DeleteFirewallRules(request)
+	return err
+}
+
+func (driver *QQCloudLHDriver) ListKeyPair(region string) ([]*KeyPair, error) {
+
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewDescribeKeyPairsRequest()
+	request.Offset = common.Int64Ptr(0)
+	request.Limit = common.Int64Ptr(100)
+
+	response, err := client.DescribeKeyPairs(request)
+	if err != nil {
+		return nil, err
+	}
+
+	keypairs := []*KeyPair{}
+	for _, lhkeypair := range response.Response.KeyPairSet {
+
+		keypair := &KeyPair{
+			KeyId:                 *lhkeypair.KeyId,
+			KeyName:               *lhkeypair.KeyName,
+			PublicKey:             *lhkeypair.PublicKey,
+			AssociatedInstanceIds: stringer(lhkeypair.AssociatedInstanceIds),
+		}
+
+		if lhkeypair.CreatedTime != nil {
+			keypair.CreatedTime, _ = time.Parse(time.RFC3339, *lhkeypair.CreatedTime)
+		}
+
+		keypairs = append(keypairs, keypair)
+	}
+
+	return keypairs, nil
+
+}
+
+func (driver *QQCloudLHDriver) CreateKeyPair(region string, name string) (*KeyPair, error) {
+
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewCreateKeyPairRequest()
+
+	request.KeyName = common.StringPtr(name)
+
+	response, err := client.CreateKeyPair(request)
+	if err != nil {
+		return nil, err
+	}
+
+	lhkeypair := response.Response.KeyPair
+
+	keypair := &KeyPair{
+		KeyId:      *lhkeypair.KeyId,
+		KeyName:    *lhkeypair.KeyName,
+		PublicKey:  *lhkeypair.PublicKey,
+		PrivateKey: *lhkeypair.PrivateKey,
+	}
+
+	if lhkeypair.CreatedTime != nil {
+		keypair.CreatedTime, _ = time.Parse(time.RFC3339, *lhkeypair.CreatedTime)
+	}
+
+	return keypair, nil
+
+}
+
+func (driver *QQCloudLHDriver) ImportKeyPair(region string, name string, publicKey string) (*KeyPair, error) {
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewImportKeyPairRequest()
+
+	request.KeyName = common.StringPtr(name)
+	request.PublicKey = common.StringPtr(publicKey)
+
+	response, err := client.ImportKeyPair(request)
+	if err != nil {
+		return nil, err
+	}
+
+	keypair := &KeyPair{
+		KeyId:   *response.Response.KeyId,
+		KeyName: name,
+	}
+
+	return keypair, nil
+}
+
+func (driver *QQCloudLHDriver) DeleteKeyPair(region string, keyids []string) error {
+
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewDeleteKeyPairsRequest()
+
+	request.KeyIds = common.StringPtrs(keyids)
+
+	_, err := client.DeleteKeyPairs(request)
+	return err
+
+}
+
+func (driver *QQCloudLHDriver) BindKeyPairs(region string, keyids []string, instanceIDs []string) error {
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewAssociateInstancesKeyPairsRequest()
+
+	request.KeyIds = common.StringPtrs(keyids)
+	request.InstanceIds = common.StringPtrs(instanceIDs)
+
+	_, err := client.AssociateInstancesKeyPairs(request)
+	return err
+}
+
+func (driver *QQCloudLHDriver) UnBindKeyPairs(region string, keyids []string, instanceIDs []string) error {
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "lighthouse.tencentcloudapi.com"
+	client, _ := lighthouse.NewClient(driver.credential, region, cpf)
+
+	request := lighthouse.NewDisassociateInstancesKeyPairsRequest()
+
+	request.KeyIds = common.StringPtrs(keyids)
+	request.InstanceIds = common.StringPtrs(instanceIDs)
+
+	_, err := client.DisassociateInstancesKeyPairs(request)
 	return err
 }

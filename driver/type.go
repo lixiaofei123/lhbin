@@ -90,8 +90,8 @@ type BlueprintType string
 
 const (
 	AllBlueprint     BlueprintType = "ALL"
-	AppBlueprint     BlueprintType = "APP"
-	PureBlueprint    BlueprintType = "PURE"
+	AppBlueprint     BlueprintType = "APP_OS"
+	PureBlueprint    BlueprintType = "PURE_OS"
 	PrivateBlueprint BlueprintType = "PRIVATE"
 	SharedBlueprint  BlueprintType = "SHARED"
 )
@@ -128,4 +128,13 @@ type FirewallRule struct {
 	CidrBlock   string
 	Action      FirewallRuleAction
 	Description string
+}
+
+type KeyPair struct {
+	KeyId                 string
+	KeyName               string
+	PublicKey             string
+	AssociatedInstanceIds []string
+	CreatedTime           time.Time
+	PrivateKey            string
 }

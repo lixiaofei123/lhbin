@@ -36,6 +36,13 @@ type Driver interface {
 	AddFirewallRules(region string, instanceID string, roles []*FirewallRule) error
 	UpdateFirewallRules(region string, instanceID string, roles []*FirewallRule) error
 	DeleteFirewallRules(region string, instanceID string, roles []*FirewallRule) error
+
+	ListKeyPair(region string) ([]*KeyPair, error)
+	CreateKeyPair(region string, name string) (*KeyPair, error)
+	ImportKeyPair(region string, name string, publicKey string) (*KeyPair, error)
+	DeleteKeyPair(region string, keyids []string) error
+	BindKeyPairs(region string, keyids []string, instanceIDs []string) error
+	UnBindKeyPairs(region string, keyids []string, instanceIDs []string) error
 }
 
 func GetDriver(account *config.AccountConfig) (Driver, error) {
@@ -43,4 +50,17 @@ func GetDriver(account *config.AccountConfig) (Driver, error) {
 		return NewQQCloudLHDriver(account.AKID, account.AKSecret), nil
 	}
 	return nil, errors.New("没有合适的驱动")
+}
+
+func stringer(str []*string) []string {
+	var strs []string
+	for _, s := range str {
+		if s == nil {
+			strs = append(strs, "")
+			continue
+		}
+		strs = append(strs, *s)
+	}
+
+	return strs
 }
