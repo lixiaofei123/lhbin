@@ -20,8 +20,9 @@ func init() {
 	RegisterChildCommandOperator(InstanceCommandName, "stop", "停止指定条件的轻量实例", []string{}, RiskOperation("请确认已经保存好相关的工作", StopInstances))
 	RegisterChildCommandOperator(InstanceCommandName, "start", "启动指定条件的轻量实例", []string{}, SafeOperation(StartInstances))
 	RegisterChildCommandOperator(InstanceCommandName, "restart", "重启指定条件的轻量实例", []string{"reboot"}, RiskOperation("请确认已经保存好相关的工作", RebootInstances))
+	RegisterChildCommandOperator(InstanceCommandName, "passwd", "修改指定条件的轻量实例的密码", []string{""}, RiskOperation("修改过程中会重启服务器，请确认已经保存好相关的工作", ResetInstancesPassword))
 	RegisterChildCommandOperator(InstanceCommandName, "reset", "重置指定条件的轻量服务器的镜像", []string{}, DangerOperation("重置服务器后无法恢复，请注意备份好相关数据", ResetInstances))
-	RegisterChildCommandOperator(InstanceCommandName, "terminate", "销毁指定条件的轻量实例", []string{"destory"}, DangerOperation("销毁服务器后无法恢复，请注意备份好相关数据。是否退款以腾讯云官方为准。", TerminateInstances))
+	//RegisterChildCommandOperator(InstanceCommandName, "terminate", "销毁指定条件的轻量实例", []string{"destory"}, DangerOperation("销毁服务器后无法恢复，请注意备份好相关数据。是否退款以腾讯云官方为准。", TerminateInstances))
 }
 
 func baseBatchOperatorInstances(secondConfirm bool, checkCallback func(region string, insids string) error, callback func(cdriver driver.Driver, region, name string, insid string, args ...interface{})) error {
@@ -183,7 +184,7 @@ func ListInstances() error {
 				return err
 			}
 			for _, ins := range inss {
-				fmt.Println("|", region.Name, "|", ins.Name, "|", ins.ID, "|", ins.PublicIP, "|", ins.PrivateIP, "|", ins.State, "|")
+				fmt.Println("|", region.Region, "|", ins.Name, "|", ins.ID, "|", ins.PublicIP, "|", ins.PrivateIP, "|", ins.State, "|")
 				fmt.Println("------------------------------------------")
 			}
 		}
@@ -194,7 +195,7 @@ func ListInstances() error {
 			return err
 		}
 		for _, ins := range inss {
-			fmt.Println("|", ins.Region, "|", ins.Name, "|", ins.ID, "|", ins.PublicIP, "|", ins.PrivateIP, "|", ins.State, "|")
+			fmt.Println("|", region, "|", ins.Name, "|", ins.ID, "|", ins.PublicIP, "|", ins.PrivateIP, "|", ins.State, "|")
 			fmt.Println("------------------------------------------")
 		}
 
