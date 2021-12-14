@@ -3,7 +3,6 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -14,7 +13,8 @@ import (
 
 func checkArg(arg *string, errText string) {
 	if *arg == "" {
-		log.Panicln(errText)
+		fmt.Println(errText)
+		os.Exit(-1)
 	}
 }
 

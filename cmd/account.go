@@ -9,13 +9,14 @@ import (
 	"github.com/lixiaofei123/lhbin/config"
 )
 
-const ConfigCommandName string = "config"
+const AccountCommandName string = "account"
 
 func init() {
 
-	RegisterChildCommand(ConfigCommandName, "管理账户信息配置，支持多账户", []string{})
-	RegisterChildCommandOperator(ConfigCommandName, "add", "添加新的账户", []string{}, SafeOperation(AddAccount))
-	RegisterChildCommandOperator(ConfigCommandName, "del", "删除指定账户", []string{"delete"}, SafeOperation(DeleteAccount))
+	RegisterChildCommand(AccountCommandName, "管理账户信息配置，支持多账户", []string{})
+	RegisterChildCommandOperator(AccountCommandName, "add", "添加新的账户", []string{}, SafeOperation(AddAccount))
+	RegisterChildCommandOperator(AccountCommandName, "del", "删除指定账户", []string{"delete"}, SafeOperation(DeleteAccount))
+	RegisterChildCommandOperator(AccountCommandName, "list", "列出所有账户", []string{}, SafeOperation(ListAccounts))
 }
 
 func AddAccount() error {
@@ -47,7 +48,7 @@ func AddAccount() error {
 		AKSecret: aksecret,
 	})
 
-	fmt.Println("配置成功")
+	fmt.Printf("配置账户%s成功", account)
 	return nil
 }
 
@@ -63,7 +64,21 @@ func DeleteAccount() error {
 
 	checkArg(&account, "账号名称不能为空")
 	config.DeleteAccount(config.DriverName(driverName), account)
-	fmt.Println("删除配置成功")
+	fmt.Printf("删除账户%s成功\n", account)
+
+	return nil
+}
+
+func ListAccounts() error {
+
+	fmt.Println("------------------------------------------")
+	fmt.Println("| 驱动 | 账户名称 | AKID | AKSecret |")
+	fmt.Println("------------------------------------------")
+
+	for _, account := range config.GlobalConfig.Accounts {
+		fmt.Println("|", account.Driver, "|", account.Account, "|", account.AKID, "|", account.AKSecret, "|")
+		fmt.Println("------------------------------------------")
+	}
 
 	return nil
 }

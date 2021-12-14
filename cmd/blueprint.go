@@ -113,6 +113,7 @@ func DescribeBlueprint() error {
 	fmt.Println("| 操作系统 | ", blueprint.OsName, "|")
 	fmt.Println("| 最小磁盘要求 | ", blueprint.RequiredDiskSize, "GB |")
 	fmt.Println("| 最小内存要求 | ", blueprint.RequiredMemory, "GB |")
+	fmt.Println("| 状态 | ", blueprint.State, "|")
 	fmt.Println("| 描述 | ", blueprint.Description, "|")
 	fmt.Println("-------------------------------")
 
