@@ -1,3 +1,5 @@
+[![.github/workflows/main.yml](https://github.com/lixiaofei123/lhbin/actions/workflows/main.yml/badge.svg)](https://github.com/lixiaofei123/lhbin/actions/workflows/main.yml)
+
 # lhbin
 
 轻量服务器命令行工具
